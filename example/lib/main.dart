@@ -14,6 +14,9 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
 
+  BleStatus _bleStatus;
+  String    _codeValue = '';
+
   @override
   void initState() {
     super.initState();
@@ -23,10 +26,19 @@ class _MyAppState extends State<MyApp> {
     BleScanner().eventOnListen(
       onBLEStatus: (status) async {
         print('status $status');
+        setState(() {
+          _bleStatus = status;
+        });
       },
+      onBLEScanResult: (codeValue) async {
+        print('scan code: $codeValue');
+        setState(() {
+          _codeValue = codeValue;
+        });
+      }
     );
 
-    //initPlatformState();
+    initPlatformState();
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -57,7 +69,15 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: Center(
-          child: Text('Running on: $_platformVersion\n'),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text('Running on: $_platformVersion\n'),
+              Text('BLE Status: $_bleStatus\n'),
+              Text('Scan Result: $_codeValue\n'),
+            ],
+          ),
         ),
       ),
     );
